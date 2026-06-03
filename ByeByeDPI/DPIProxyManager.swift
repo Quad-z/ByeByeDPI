@@ -63,7 +63,7 @@ final class DPIProxyManager: ObservableObject, @unchecked Sendable {
             let ip = ud.string(forKey: "byedpi_proxy_ip") ?? "127.0.0.1"
             let port = ud.string(forKey: "byedpi_proxy_port") ?? "1080"
             let parts = cmdStr.split(separator: " ").map(String.init)
-            args = ["-i", ip, "-p", port] + parts
+            args = ["ciadpi", "-i", ip, "-p", port] + parts
         } else {
             args = buildArgsFromUI()
         }
@@ -131,7 +131,7 @@ final class DPIProxyManager: ObservableObject, @unchecked Sendable {
         let hostsBlacklist = ud.string(forKey: "byedpi_hosts_blacklist") ?? ""
         let hostsWhitelist = ud.string(forKey: "byedpi_hosts_whitelist") ?? ""
 
-        var args: [String] = ["-i", ip, "-p", port, "-c", maxConn, "-b", bufSize]
+        var args: [String] = ["ciadpi", "-i", ip, "-p", port, "-c", maxConn, "-b", bufSize]
 
         if let ttl = Int(defaultTtl), ttl != 0 {
             args.append("-g\(ttl)")
