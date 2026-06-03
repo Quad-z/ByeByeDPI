@@ -1,0 +1,43 @@
+name: Build IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned IPA
+        run: |
+          xcodebuild -project ByeByeDPI.xcodeproj \
+            -scheme ByeByeDPI \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/ByeByeDPI.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            archive
+
+          mkdir -p ipa
+          xcodebuild -exportArchive \
+            -archivePath build/ByeByeDPI.xcarchive \
+            -exportPath ipa \
+            -exportOptionsPlist <(echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict><key>method</key><string>development</string><key>signingStyle</key><string>manual</string><key>stripSwiftSymbols</key><true/><key>compileBitcode</key><false/></dict></plist>')
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ByeByeDPI
+          path: ipa/ByeByeDPI.ipa

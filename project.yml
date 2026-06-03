@@ -1,0 +1,28 @@
+name: ByeByeDPI
+options:
+  bundleIdPrefix: com.byebye.dpi
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+
+targets:
+  ByeByeDPI:
+    type: application
+    platform: iOS
+    sources:
+      - path: ByeByeDPI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.byebye.dpi
+        INFOPLIST_KEY_CFBundleDisplayName: ByeByeDPI
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
