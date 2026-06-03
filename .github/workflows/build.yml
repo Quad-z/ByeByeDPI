@@ -3,7 +3,7 @@ name: Build IPA
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Build unsigned IPA
+      - name: Build unsigned app
         run: |
           xcodebuild -project ByeByeDPI.xcodeproj \
             -scheme ByeByeDPI \
@@ -28,13 +28,12 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             archive
 
-          mkdir -p ipa
-          xcodebuild -exportArchive \
-            -archivePath build/ByeByeDPI.xcarchive \
-            -exportPath ipa \
-            -exportOptionsPlist <(echo '<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><dict><key>method</key><string>development</string><key>signingStyle</key><string>manual</string><key>stripSwiftSymbols</key><true/><key>compileBitcode</key><false/></dict></plist>')
+      - name: Package unsigned IPA
+        run: |
+          mkdir -p ipa/Payload
+          cp -r "build/ByeByeDPI.xcarchive/Products/Applications/ByeByeDPI.app" ipa/Payload/
+          cd ipa
+          zip -r ByeByeDPI.ipa Payload/
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
