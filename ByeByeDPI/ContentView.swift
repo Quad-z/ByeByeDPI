@@ -4,7 +4,7 @@ struct ContentView: View {
     @StateObject private var proxy = DPIProxyManager.shared
     @State private var showEditor = false
     @State private var showSettings = false
-    @State private var showPicker = false
+    @State private var showTest = false
     @State private var showLists = false
     @State private var showAlert = false
     @State private var alertMessage = ""
@@ -21,11 +21,8 @@ struct ContentView: View {
                             .foregroundColor(.white)
                         Spacer()
                         Menu {
-                            Button("О приложении") {
-                                alertMessage = "ByeByeDPI v1.0\nОбход DPI на основе byedpi"
-                                showAlert = true
-                            }
-                            Button("Экспорт логов") { proxy.exportLogs() }
+                            Button("Сохранить логи") { proxy.exportLogs() }
+                            Button("Закрыть приложение") { exit(0) }
                         } label: {
                             Image(systemName: "ellipsis")
                                 .font(.system(size: 22, weight: .bold))
@@ -53,6 +50,7 @@ struct ContentView: View {
                                         Circle()
                                             .stroke(proxy.state == .loading ? Color.yellow.opacity(0.6) : proxy.state.color.opacity(0.4), lineWidth: 4)
                                     )
+                                    .shadow(color: proxy.state == .on ? .green.opacity(0.4) : .clear, radius: 20)
                                 if proxy.state == .loading {
                                     ProgressView()
                                         .tint(.white)
@@ -78,15 +76,15 @@ struct ContentView: View {
 
                     Spacer()
 
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
-                        FeatureTile(icon: "slider.horizontal.3", title: "Редактор")
-                            .onTapGesture { showEditor = true }
-                        FeatureTile(icon: "gearshape.fill", title: "Настройки")
-                            .onTapGesture { showSettings = true }
-                        FeatureTile(icon: "gauge.medium", title: "Подбор")
-                            .onTapGesture { showPicker = true }
-                        FeatureTile(icon: "list.bullet", title: "Списки")
-                            .onTapGesture { showLists = true }
+                    VStack(spacing: 16) {
+                        HStack(spacing: 16) {
+                            TileButton(icon: "slider.horizontal.3", title: "Редактор", action: { showEditor = true })
+                            TileButton(icon: "gearshape.fill", title: "Настройки", action: { showSettings = true })
+                        }
+                        HStack(spacing: 16) {
+                            TileButton(icon: "gauge.medium", title: "Подбор", action: { showTest = true })
+                            TileButton(icon: "list.bullet", title: "Списки", action: { showLists = true })
+                        }
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
@@ -94,8 +92,8 @@ struct ContentView: View {
             }
             .navigationDestination(isPresented: $showEditor) { EditorView() }
             .navigationDestination(isPresented: $showSettings) { SettingsView() }
-            .navigationDestination(isPresented: $showPicker) { PickerView() }
-            .navigationDestination(isPresented: $showLists) { ListsView() }
+            .navigationDestination(isPresented: $showTest) { TestView() }
+            .navigationDestination(isPresented: $showLists) { DomainListsView() }
             .alert("ByeByeDPI", isPresented: $showAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -111,86 +109,26 @@ struct ContentView: View {
     }
 }
 
-struct FeatureTile: View {
+struct TileButton: View {
     let icon: String
     let title: String
+    let action: () -> Void
 
     var body: some View {
-        VStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 28))
-                .foregroundColor(.white)
-            Text(title)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.white)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 28)
-        .background(Color(.sRGB, white: 0.12, opacity: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-    }
-}
-
-// MARK: - Placeholder views for tiles
-
-struct EditorView: View {
-    var body: some View {
-        List {
-            Section("Параметры ByeDPI") {
-                Text("--socks 127.0.0.1:1080")
-                Text("--fake")
-                Text("--split 2")
-                Text("--tls")
-                Text("--http")
-                Text("--md5sig")
+        Button(action: action) {
+            VStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 28))
+                    .foregroundColor(.white)
+                Text(title)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(.white)
             }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 28)
+            .background(Color(.sRGB, white: 0.12, opacity: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
         }
-        .navigationTitle("Редактор")
-    }
-}
-
-struct SettingsView: View {
-    var body: some View {
-        List {
-            Section("Прокси") {
-                HStack {
-                    Text("Адрес")
-                    Spacer()
-                    Text("127.0.0.1:1080").foregroundColor(.gray)
-                }
-                HStack {
-                    Text("Протокол")
-                    Spacer()
-                    Text("SOCKS5").foregroundColor(.gray)
-                }
-            }
-        }
-        .navigationTitle("Настройки")
-    }
-}
-
-struct PickerView: View {
-    var body: some View {
-        List {
-            Section("Стратегия обхода") {
-                Text("По умолчанию")
-                Text("fake + split + tls + http + md5sig")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-        }
-        .navigationTitle("Подбор")
-    }
-}
-
-struct ListsView: View {
-    var body: some View {
-        List {
-            Section("Списки доменов") {
-                Text("Список не загружен")
-                    .foregroundColor(.gray)
-            }
-        }
-        .navigationTitle("Списки")
+        .buttonStyle(PlainButtonStyle())
     }
 }
