@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var proxy = LocalProxyManager.shared
+    @StateObject private var proxy = DPIProxyManager.shared
 
     var body: some View {
         ZStack {

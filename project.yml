@@ -5,6 +5,11 @@ options:
     iOS: "16.0"
   xcodeVersion: "15.0"
 
+packages:
+  SwByeDPI:
+    url: https://github.com/mIwr/SwByeDPI.git
+    from: 0.17.3
+
 settings:
   base:
     SWIFT_VERSION: "5.0"
@@ -26,3 +31,6 @@ targets:
         DEVELOPMENT_TEAM: ""
         CODE_SIGN_STYLE: Automatic
         GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - package: SwByeDPI
+        product: ByeDPIKit
