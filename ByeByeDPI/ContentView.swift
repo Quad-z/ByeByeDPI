@@ -69,7 +69,7 @@ struct ContentView: View {
                             .font(.system(size: 18, weight: .medium))
                             .foregroundColor(proxy.state.textColor)
 
-                        Text("127.0.0.1:1080")
+                        Text("\(UserDefaults.standard.string(forKey: "byedpi_proxy_ip") ?? "127.0.0.1"):\(UserDefaults.standard.string(forKey: "byedpi_proxy_port") ?? "1050")")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }

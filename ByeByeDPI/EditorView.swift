@@ -28,7 +28,7 @@ struct EditorView: View {
     @AppStorage("byedpi_tlsrec_position") private var tlsrecPosition = "0"
     @AppStorage("byedpi_tlsrec_at_sni") private var tlsrecAtSni = false
     @AppStorage("byedpi_udp_fake_count") private var udpFakeCount = "1"
-    @AppStorage("byedpi_cmd_args") private var cmdArgs = "-o1 -a1 -r-5+se"
+    @AppStorage("byedpi_cmd_args") private var cmdArgs = "-s1 -d1 -r1+s -a1 -Ar -o1 -a1 -At -r1+s -a1"
 
     var body: some View {
         List {

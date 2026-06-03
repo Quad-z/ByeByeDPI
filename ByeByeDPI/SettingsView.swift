@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("byedpi_proxy_ip") private var proxyIP = "127.0.0.1"
-    @AppStorage("byedpi_proxy_port") private var proxyPort = "1080"
+    @AppStorage("byedpi_proxy_port") private var proxyPort = "1050"
     @AppStorage("auto_connect") private var autoConnect = false
     @AppStorage("app_theme") private var theme = "system"
 
@@ -33,7 +33,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Порт")
                     Spacer()
-                    TextField("1080", text: $proxyPort)
+                            TextField("1050", text: $proxyPort)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                         .foregroundColor(.gray)
