@@ -38,8 +38,6 @@ final class DPIProxyManager: ObservableObject {
     @Published private(set) var state: ProxyState = .off
     @Published var errorMessage: String?
 
-    private var startTime: Date?
-
     private init() {}
 
     func toggle() {
@@ -58,29 +56,26 @@ final class DPIProxyManager: ObservableObject {
         let args = [
             "byedpi",
             "--socks", "127.0.0.1:1080",
-            "--fake",
-            "--split", "2",
-            "--tls",
-            "--http",
-            "--md5sig",
         ]
 
         ByeDPI.start(args: args) { [weak self] error in
             DispatchQueue.main.async {
                 self?.state = .off
-                self?.errorMessage = "Ошибка запуска: \(error.localizedDescription)"
+                if case .startError(let code) = error {
+                    self?.errorMessage = "Код ошибки: \(code). Проверьте, что порт 1080 свободен."
+                } else {
+                    self?.errorMessage = error.localizedDescription
+                }
             }
         }
 
-        startTime = Date()
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             guard let self = self, self.state == .loading else { return }
             if ByeDPI.proxyStarted {
                 self.state = .on
             } else {
                 self.state = .off
-                self.errorMessage = "Прокси не запустился. Попробуйте ещё раз."
+                self.errorMessage = "Прокси не запустился. Попробуйте переустановить приложение."
             }
         }
     }
