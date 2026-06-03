@@ -53,16 +53,18 @@ final class DPIProxyManager: ObservableObject {
         state = .loading
         errorMessage = nil
 
-        let args = [
-            "byedpi",
-            "--socks", "127.0.0.1:1080",
+        let args: [String] = [
+            "-i", "127.0.0.1",
+            "-p", "10800",
+            "-b", "16384",
+            "-c", "512",
         ]
 
         ByeDPI.start(args: args) { [weak self] error in
             DispatchQueue.main.async {
                 self?.state = .off
                 if case .startError(let code) = error {
-                    self?.errorMessage = "Код ошибки: \(code). Проверьте, что порт 1080 свободен."
+                    self?.errorMessage = "Код ошибки: \(code)"
                 } else {
                     self?.errorMessage = error.localizedDescription
                 }
@@ -75,13 +77,13 @@ final class DPIProxyManager: ObservableObject {
                 self.state = .on
             } else {
                 self.state = .off
-                self.errorMessage = "Прокси не запустился. Попробуйте переустановить приложение."
+                self.errorMessage = "Прокси не запустился."
             }
         }
     }
 
     func stop() {
-        ByeDPI.forceStop()
+        _ = ByeDPI.stop()
         state = .off
         errorMessage = nil
     }
