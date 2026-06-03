@@ -1,4 +1,5 @@
 import SwiftUI
+import ByeDPIKit
 
 struct StrategyResultItem: Identifiable {
     let id = UUID()
