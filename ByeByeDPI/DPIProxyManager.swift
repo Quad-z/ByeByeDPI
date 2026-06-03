@@ -32,7 +32,7 @@ enum ProxyState: Equatable {
     }
 }
 
-final class DPIProxyManager: ObservableObject {
+final class DPIProxyManager: ObservableObject, @unchecked Sendable {
     static let shared = DPIProxyManager()
 
     @Published private(set) var state: ProxyState = .off
